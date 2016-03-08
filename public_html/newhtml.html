@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<link>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Test</title>
+
+    <!--
+    -- Step: Configure dojo for asynchronous module loading
+    -->
+
+
+
+
+
+
+    <script src="subfolder/js/dojoconfig.js" type="text/javascript"></script>
+
+    <!--
+    -- Step: Reference the ArcGIS API for JavaScript and Esri CSS
+    -->
+    <link rel="stylesheet" href="http://js.arcgis.com/3.15/esri/css/esri.css">
+    <link rel="stylesheet" href="http://js.arcgis.com/3.15/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" type="text/css" href="subfolder/css.css">
+
+    <script src="http://js.arcgis.com/3.15"></script>
+    <script src="subfolder/js/jscript.js" type="text/javascript"></script>
+        
+        
+        <!--
+        
+        
+        /*
+        
+        //Configure Popup Template
+    var fill = new SimpleFillSymbol("solid", null, new Color("#A4CE67"));
+    var popup = new Popup({
+        fillSymbol: fill,
+        titleInBody: false
+    }, domConstruct.create("div"));
+    domClass.add(popup.domNode, "dark");
+
+*/
+
+
+     
+         //           // stub
+
+/*
+map.on("layers-add-result", function (evt) {
+        var layerInfo = arrayUtils.map(evt.layers, function (layer, index) {
+            return {layer: layer.layer, title: layer.layer.name};
+        });
+        if (layerInfo.length > 0) {
+            var legendDijit = new Legend({
+                map: map,
+                layerInfos: layerInfo
+            }, "legendDiv");
+            legendDijit.startup();
+        }
+    */
+
+   -->
+
+
+    <!--
+    -- Step: Reference the gettingstarted.css file
+    -->
+
+    
+</head>
+<body class="claro">
+<div id="bcMain" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', liveSplitters:'true'">
+    <div id="cpLeading" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:'true', region:'leading'">
+        <div id="divLegend"></div>
+    </div>
+    <div id="cpCenter" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+        <div id="Map"></div>
+        <div id="Graphs">
+           <div id="Bar"></div>
+           <div id="hBar"></div>
+           </div>
+    </div>
+    
+    
+</div>
+</body>
+
+</html>
