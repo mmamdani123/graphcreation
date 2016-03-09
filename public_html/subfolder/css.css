@@ -59,20 +59,3 @@ body {
     left: 20%;
     
 }
-
-#Bar {
-    width: 45%;
-    border: 1px solid;
-    height: 100%;
-}
-
-
-#hBar{
-    width: 45%;
-    border: 1px solid;
-    height: 100%;
-    position: absolute;
-    left: 45%;
-    top: 0%;
-
-}

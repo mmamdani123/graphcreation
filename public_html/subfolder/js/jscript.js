@@ -172,7 +172,7 @@ var myMap;
                 label: "Color:",
                 visible: true
             }, {
-                fieldName: "PLOTNO_",
+                fieldName: "plot_no",
                 label: "Plot No:",
                 visible: true
             }, {
@@ -228,7 +228,7 @@ var myMap;
         infoTemplate: parkingTemplate,
         id: "parkingLayer"
     });
-    var parcelsLayer = new FeatureLayer("http://192.168.10.73:6080/arcgis/rest/services/kwale_rms/kwalerms/FeatureServer/5", {
+    var parcelsLayer = new FeatureLayer("http://192.168.10.73:6080/arcgis/rest/services/test/kwale_test101/FeatureServer/5", {
         mode: FeatureLayer.MODE_ONDEMAND,
         outFields: ["*"],
         opacity: 0.7,
@@ -261,21 +261,26 @@ var myMap;
          //create a cedar chart using the known 'bar' type
   // this is the same as passing {"specification": "path/to/cedar/charts/bar.json"}
   
-        
+       
  
       var chart = new Cedar({"type": "bar"});
 
   //create the dataset w/ mappings
   var dataset = {
-    "url":"http://192.168.10.73:6080/arcgis/rest/services/kwale_rms/kwalerms/FeatureServer/5",
+    "url":"http://192.168.10.73:6080/arcgis/rest/services/test/kwale_test101/FeatureServer/5",
     "query": {
-                "where": "balance > 0"
+                "where": "balance > 100000"
             },
             "mappings": {
-                "x": {"field": "PLOTNO_", "label": "Plot Number"},
+                "x": {"field": "plot_no", "label": "Plot Number"},
                 "y": {"field": "balance", "label": "Balance"}
       }
 
+  };
+  
+  chart.tooltip = {
+    "title": "{plot_no}",
+    "content": "{balance} Shillings"
   };
 
   //assign to the chart
@@ -283,34 +288,10 @@ var myMap;
 
   //show the chart
   chart.show({
-    elementId: "#Bar",
-    width: 700,
-    height: 400
+    elementId: "#Graphs"
+
 
   });
       window.chart = chart;
   
- var chart2 = new Cedar({"type":"bar-horizontal"});
-
- var dataset2 = {
-    "url":"http://192.168.10.73:6080/arcgis/rest/services/kwale_rms/kwalerms/FeatureServer/5",
-    "query": {
-                "where": "balance > 0"
-            },
-            "mappings": {
-                "x": {"field": "balance", "label": "Balance"},
-                "y": {"field": "PLOTNO_", "label": "Plot Number"}
-
-      }
-
-  };
-  
-    chart2.dataset = dataset2;
-
-
-  chart2.show({
-    elementId: "#hBar",
-    width: 700,
-    height: 400
-  });
     });
