@@ -28,6 +28,11 @@ var myMap;
                 zoom : 15
             });
             
+            myMap.on('extent-change', function() {
+      onExtentChanged();
+    });
+
+            
             
             
             //Define pop up for outdoor advertisements
@@ -286,6 +291,16 @@ var myMap;
   //assign to the chart
   chart.dataset = dataset;
 
+
+    chart.override = {
+     // "height": 300,
+      "marks": [{"properties": {
+          "hover": {"fill": {"value": "#f8bb25"}},
+          "update": {"fill": {"value": "#c60c46"}}
+        }
+      }]
+    };
+
   //show the chart
   chart.show({
     elementId: "#Graphs"
@@ -293,5 +308,13 @@ var myMap;
 
   });
       window.chart = chart;
+      
+      function onExtentChanged(){
+      var extent = myMap.geographicExtent.toJson();
+      //WESN order
+      chart.dataset.query.bbox = extent.xmin + ',' + extent.xmax + ',' + extent.ymin + ',' + extent.ymax;
+      chart.update();
+    }
+
   
     });
