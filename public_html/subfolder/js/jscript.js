@@ -3,7 +3,9 @@ var myMap;
         
         require([
         "cedar",
+        
         "esri/map",
+        "esri/layers/ArcGISDynamicMapServiceLayer",
         "esri/layers/FeatureLayer",
         "esri/dijit/Popup",
         "esri/dijit/PopupTemplate",
@@ -18,8 +20,8 @@ var myMap;
     
     function(Cedar, 
     
-            Map, FeatureLayer, Popup, PopupTemplate,SimpleFillSymbol, Legend,
-             on) {
+            Map, ArcGISDynamicMapServiceLayer, FeatureLayer, Popup, PopupTemplate,SimpleFillSymbol, Legend,
+             on, domready) {
            
         
         myMap = new Map("Map", {
@@ -28,14 +30,13 @@ var myMap;
                 zoom : 15
             });
             
-            myMap.on('extent-change', function() {
-      onExtentChanged();
-    });
+            
+            var lyrKwale = new ArcGISDynamicMapServiceLayer("http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwalerms3/MapServer", {
+                id: "Kwale"
+            });
 
             
-            
-            
-            //Define pop up for outdoor advertisements
+                        //Define pop up for outdoor advertisements
     var outdoorTemplate = new PopupTemplate({
         title: "Outdoor Advertisement",
         //description: "GIS Code: {giscode}",
@@ -131,8 +132,23 @@ var myMap;
                 visible: true
             }]
     });
-
-    //Define pop up for parking areas
+    
+    
+                //Define pop up for other features
+    var otherTemplate = new PopupTemplate({
+        title: "Parking",
+        //description: "Name: {name}",
+        fieldInfos: [{
+                fieldName: "name",
+                label: "Name:",
+                visible: true
+            }, {
+                fieldName: "gis_code",
+                label: "GIS Code:",
+                visible: true
+            }]
+    });
+            //Define pop up for parking areas
     var parkingTemplate = new PopupTemplate({
         title: "Parking",
         //description: "Name: {name}",
@@ -177,7 +193,7 @@ var myMap;
                 label: "Color:",
                 visible: true
             }, {
-                fieldName: "plot_no",
+                fieldName: "PLOTNO_",
                 label: "Plot No:",
                 visible: true
             }, {
@@ -203,55 +219,59 @@ var myMap;
             }]
     });
             
-            var outdoorAdvertisementLayer = new FeatureLayer("http://192.168.10.73:6080/arcgis/rest/services/kwale_rms/kwalerms/FeatureServer/0", {
+            
+            
+            
+               
+    var outdoorAdvertisementLayer = new FeatureLayer("http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwalerms3/MapServer/0", {
         mode: FeatureLayer.MODE_ONDEMAND,
         outFields: ["*"],
         infoTemplate: outdoorTemplate,
         id: "outdoorAdvertisementLayer"
     });
-    var marketLayer = new FeatureLayer("http://192.168.10.73:6080/arcgis/rest/services/kwale_rms/kwalerms/FeatureServer/1", {
+    var marketLayer = new FeatureLayer("http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwalerms3/MapServer/1", {
         mode: FeatureLayer.MODE_ONDEMAND,
         outFields: ["*"],
         infoTemplate: marketTemplate,
         id: "marketLayer"
     });
-    var houseLayer = new FeatureLayer("http://192.168.10.73:6080/arcgis/rest/services/kwale_rms/kwalerms/FeatureServer/2", {
+    var houseLayer = new FeatureLayer("http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwalerms3/MapServer/2", {
         mode: FeatureLayer.MODE_ONDEMAND,
         outFields: ["*"],
         infoTemplate: houseTemplate,
         id: "houseLayer"
     });
-    var buildingLayer = new FeatureLayer("http://192.168.10.73:6080/arcgis/rest/services/kwale_rms/kwalerms/FeatureServer/3", {
+    var buildingLayer = new FeatureLayer("http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwalerms3/MapServer/3", {
         mode: FeatureLayer.MODE_ONDEMAND,
         outFields: ["*"],
         infoTemplate: buildingsTemplate,
         id: "buildingLayer"
     });
-    var parkingLayer = new FeatureLayer("http://192.168.10.73:6080/arcgis/rest/services/kwale_rms/kwalerms/FeatureServer/4", {
+    var otherLayer = new FeatureLayer("http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwalerms3/MapServer/4", {
+        mode: FeatureLayer.MODE_ONDEMAND,
+        outFields: ["*"],
+        infoTemplate: otherTemplate,
+        id: "otherLayer"
+    });
+    var parkingLayer = new FeatureLayer("http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwalerms3/MapServer/5", {
         mode: FeatureLayer.MODE_ONDEMAND,
         outFields: ["*"],
         infoTemplate: parkingTemplate,
         id: "parkingLayer"
     });
-    var parcelsLayer = new FeatureLayer("http://192.168.10.73:6080/arcgis/rest/services/test/kwale_test101/FeatureServer/5", {
+    var parcelsLayer = new FeatureLayer("http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwalerms3/MapServer/6", {
         mode: FeatureLayer.MODE_ONDEMAND,
         outFields: ["*"],
         opacity: 0.7,
         infoTemplate: parcelsTemplate,
         id: "parcelsLayer"
     });
-    
-    //Initialize Administrative Map Layer
-    var boundaryLayer = new FeatureLayer("http://192.168.10.73:6080/arcgis/rest/services/test/KwaleAdministrative/MapServer/0", {
-        mode: FeatureLayer.MODE_ONDEMAND,
-        outFields: ["*"],
-        id: "boundaryLayer"
-    });
-    
-    //Add feature layers to map
-    myMap.addLayers([boundaryLayer, parcelsLayer, buildingLayer, houseLayer, marketLayer, outdoorAdvertisementLayer, parkingLayer]);
 
-    
+    //Add feature layers to map
+    myMap.addLayers([ parcelsLayer, buildingLayer, houseLayer, marketLayer, outdoorAdvertisementLayer, parkingLayer, otherLayer]);
+
+
+    //Add a legend to the map
     myMap.on("layers-add-result", function() {
                 var dijitLegend = new Legend({
                     map: myMap,
@@ -259,62 +279,62 @@ var myMap;
                 }, "divLegend");
                 dijitLegend.startup();
         }
-                 ); 
-         
+        ); 
+//
+//        var chart = new Cedar({
+//	"type": "grouped",
+//	"tooltip": {
+//		"title": "{Building_Name}",
+//		"content": "Invoice: {invoice_total} <br /> Reciept: {receipt_total} <br /> Balance: {balance}"
+//	},
+//	"dataset":{
+//	  "url": "http://192.168.10.73:6080/arcgis/rest/services/test/kwale_test103/FeatureServer/7",
+//          "query": {
+//              "groupByFieldsForStatistics":"GIS_code",
+//              "outStatistics": {"statisticType":"sum","onStatisticField":"invoice_total","outStatisticFieldName":"sum_invoice"}},
+//	  "mappings":{
+//	    "x": {"field":["GIS_code"],"label":"GIS Code"},
+//	    "group":{"field":"sum_invoice","label":"Amount"}
+//	  }
+//	}
+//    });
     
-        
-         //create a cedar chart using the known 'bar' type
-  // this is the same as passing {"specification": "path/to/cedar/charts/bar.json"}
-  
-       
- 
-      var chart = new Cedar({"type": "bar"});
-
-  //create the dataset w/ mappings
-  var dataset = {
-    "url":"http://192.168.10.73:6080/arcgis/rest/services/test/kwale_test101/FeatureServer/5",
-    "query": {
-                "where": "balance > 100000"
-            },
+    
+    var chart = new Cedar({"type": "grouped",
+        "tooltip": {
+		"title": "{GIS_code}",
+		"content": "Invoice: {sum_invoice} <br /> Reciept: {sum_receipt} <br /> Balance: {sum_balance}"
+	}
+    });
+    
+    var dataset = {
+            "url": "http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwale_test103/FeatureServer/7",
+            "query": {
+              "groupByFieldsForStatistics":"GIS_code",
+              "outStatistics": [{
+                      "statisticType":"sum",
+                      "onStatisticField":"invoice_total",
+                      "outStatisticFieldName":"sum_invoice"
+                  },
+              {"statisticType":"sum",
+                "onStatisticField":"receipt_total",
+                "outStatisticFieldName":"sum_receipt"},
+            {"statisticType":"sum",
+                "onStatisticField":"balance",
+                "outStatisticFieldName":"sum_balance"}
+        ]
+          },
             "mappings": {
-                "x": {"field": "plot_no", "label": "Plot Number"},
-                "y": {"field": "balance", "label": "Balance"}
-      }
+                "x": {"field":["attributes.sum_invoice", "attributes.sum_receipt", "attributes.sum_balance"],"label":"Amount"},
+                "group": {"field": "GIS_code", "label": "GIS Code"}
+            }
+        };
 
-  };
-  
-  chart.tooltip = {
-    "title": "{plot_no}",
-    "content": "{balance} Shillings"
-  };
+        chart.dataset = dataset;
 
-  //assign to the chart
-  chart.dataset = dataset;
+    chart.show({
+	elementId: "#Graphs",
+	height: 400
+    });
 
-
-    chart.override = {
-     // "height": 300,
-      "marks": [{"properties": {
-          "hover": {"fill": {"value": "#f8bb25"}},
-          "update": {"fill": {"value": "#c60c46"}}
-        }
-      }]
-    };
-
-  //show the chart
-  chart.show({
-    elementId: "#Graphs"
-
-
-  });
-      window.chart = chart;
-      
-      function onExtentChanged(){
-      var extent = myMap.geographicExtent.toJson();
-      //WESN order
-      chart.dataset.query.bbox = extent.xmin + ',' + extent.xmax + ',' + extent.ymin + ',' + extent.ymax;
-      chart.update();
-    }
-
-  
     });
