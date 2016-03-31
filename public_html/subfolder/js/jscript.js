@@ -37,6 +37,33 @@ var myMap;
 
             
                         //Define pop up for outdoor advertisements
+                        
+        var testPointTemplate = new PopupTemplate({
+        title: "Test Point",
+        //description: "GIS Code: {giscode}",
+        fieldInfos: [{
+                fieldName: "Building_Name",
+                label: "Building Name:",
+                visible: true
+            }, {
+                fieldName: "GIS_code",
+                label: "GIS Code:",
+                visible: true
+            },{
+                fieldName: "invoice_total",
+                label: "Invoice:",
+                visible: true
+            }, {
+                fieldName: "receipt_total",
+                label: "Receipt:",
+                visible: true
+            }, {
+                fieldName: "balance",
+                label: "Balance:",
+                visible: true
+            }]
+    });
+
     var outdoorTemplate = new PopupTemplate({
         title: "Outdoor Advertisement",
         //description: "GIS Code: {giscode}",
@@ -222,7 +249,12 @@ var myMap;
             
             
             
-               
+    var testPointLayer = new FeatureLayer("http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwale_test103/FeatureServer/0", {
+        mode: FeatureLayer.MODE_ONDEMAND,
+        outFields: ["*"],
+        infoTemplate: testPointTemplate,
+        id: "testPointLayer"
+    });           
     var outdoorAdvertisementLayer = new FeatureLayer("http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwalerms3/MapServer/0", {
         mode: FeatureLayer.MODE_ONDEMAND,
         outFields: ["*"],
@@ -268,7 +300,7 @@ var myMap;
     });
 
     //Add feature layers to map
-    myMap.addLayers([ parcelsLayer, buildingLayer, houseLayer, marketLayer, outdoorAdvertisementLayer, parkingLayer, otherLayer]);
+    myMap.addLayers([ parcelsLayer, buildingLayer, houseLayer, marketLayer, outdoorAdvertisementLayer, testPointLayer, parkingLayer, otherLayer]);
 
 
     //Add a legend to the map
@@ -308,7 +340,7 @@ var myMap;
     });
     
     var dataset = {
-            "url": "http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwale_test103/FeatureServer/7",
+            "url": "http://kdc-srv-073.tbldc.com:6080/arcgis/rest/services/test/kwale_test103/FeatureServer/0",
             "query": {
               "groupByFieldsForStatistics":"GIS_code",
               "outStatistics": [{
@@ -334,7 +366,25 @@ var myMap;
 
     chart.show({
 	elementId: "#Graphs",
-	height: 400
+	height: 400,
+        width: 1400
     });
+    
+     window.chart = chart;
+    
+
+    function onExtentChanged() {
+        var extent = myMap.extent;
+        extent = JSON.stringify(extent);
+        chart.dataset.query.geometry = extent;
+        chart.update();
+    }
+    
+        //Fires when the map extent changes to update the chart
+    myMap.on('extent-change', function () {
+        onExtentChanged();
+    });
+
+
 
     });
